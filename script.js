@@ -4,10 +4,11 @@ MathJax = {
 		displayMath: [["$$", "$$"]],
 		tags: "ams"
 	},
-	chtml: {
-		scale: 1.3,
-		mtextInheritFont: true,
-	}
+	svg: {
+    displayAlign: 'center',
+    displayIndent: '0',
+    fontCache: 'global'
+  }
 };
 
 document.addEventListener("DOMContentLoaded", () => {
