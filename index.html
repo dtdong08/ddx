@@ -2,91 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>Derivative Calculator</title>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjs@11.11.1/lib/browser/math.js"></script>
-	<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Math&display=swap">
-  <style>
-    body {
-      font-family: "STIX Two Math", "Cambria Math", serif;
-			font-size: 18px;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #f2f2f2;
-    }
-    .container {
-      margin-top: 10px;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h1 {
-      text-align: center;
-      color: #333;
-    }
-    .input-group {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    #functionInput {
-      flex: 1;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    .output-box {
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      min-height: 50px;
-      font-size: 18px;
-      background-color: #f9f9f9;
-      margin-bottom: 20px;
-    }
-    .error {
-      color: #d32f2f;
-      font-weight: bold;
-    }
-		.MathJax_Display {
-			margin: 1em 0 !important;
-			text-align: left !important;
-		}
-
-		mjx-container {
-			font-size: 1.1em !important;
-		}
-
-		.math {
-			padding: 10px 0;
-			overflow-x: auto;
-		}
-  </style>
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <h1>Derivative Calculator</h1>
     <div class="input-group">
       <input type="text" id="functionInput" placeholder="Enter function (e.g., x^3 - 2x + e^x)">
-      <button onclick="calculateDerivative(); updateOriginalFunction();">Calculate</button>
+      <button id="calculateBtn">Calculate</button>
     </div>
     <div id="originalFunction" class="output-box">
       <div class="math">$$ $$</div>
@@ -94,89 +24,11 @@
     <div id="resultBox" class="output-box">
       <div class="math">$$ $$</div>
     </div>
-		<div id="graphBox" class="output-box" style="height: 400px;">
-			<div id="plotContainer"></div>
-		</div>
+    <div id="graphBox" class="output-box">
+      <div id="plotContainer"></div>
+    </div>
   </div>
 
-  <script>
-		MathJax = {
-			chtml: {
-				scale: 1.2,
-				mtextInheritFont: true
-			},
-			tex: {
-				tags: 'ams'
-			}
-		};
-		function plotFunctions(node, derivative) {
-			const xValues = [];
-			const yValues = [];
-			const dyValues = [];
-			
-			try {
-				const func = node.compile();
-				const derivFunc = derivative.compile();
-				
-				for(let x = -5; x <= 5; x += 0.1) {
-					xValues.push(x);
-					yValues.push(func.evaluate({x}));
-					dyValues.push(derivFunc.evaluate({x}));
-				}
-			} catch(e) { return; }
-
-			Plotly.newPlot('plotContainer', [{
-				x: xValues,
-				y: yValues,
-				name: "f(x)"
-			}, {
-				x: xValues,
-				y: dyValues,
-				name: "f'(x)",
-				line: {dash: 'dot'}
-			}], {
-				margin: {t: 0},
-				showlegend: true
-			});
-		}
-
-    function updateOriginalFunction() {
-      const input = document.getElementById("functionInput").value;
-      const origDiv = document.getElementById("originalFunction");
-      try {
-        const node = math.parse(input);
-        const latex = node.toTex();
-        origDiv.innerHTML = "<div>$$" + latex + "$$</div>";
-      } catch (e) {
-        origDiv.innerHTML = "<div>" + input + "</div>";
-      }
-      MathJax.typesetPromise();
-    }
-
-    function calculateDerivative() {
-      const input = document.getElementById("functionInput").value;
-      const resultBox = document.getElementById("resultBox");
-      try {
-        const node = math.parse(input);
-        const derivative = math.derivative(node, "x");
-        const derivLatex = derivative.toTex();
-        resultBox.innerHTML = "<div>$$" + derivLatex + "$$</div>";
-				plotFunctions(node, derivative);
-      } catch (e) {
-        resultBox.innerHTML = "<div class='error'>" + e.message + "</div>";
-				document.getElementById('plotContainer').innerHTML = "";
-      }
-      MathJax.typesetPromise();
-    }
-
-    document.getElementById("functionInput").addEventListener("input", updateOriginalFunction);
-
-    document.getElementById("functionInput").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") {
-        calculateDerivative();
-				updateOriginalFunction();
-      }
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
